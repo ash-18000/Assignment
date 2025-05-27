@@ -5,11 +5,29 @@ describe("App creation",()=>{
         cy.get("input[name='email']").type('test1@tooljet.com')
         cy.get("input[name='password']").type('')
         cy.get("button[type='submit']").click()
-        cy.get('[data-cy="import-dropdown-menu"]').click()
+        
+    })
+
+    //Create an Application
+    it("Create Application",()=>{
+        cy.get('[data-cy="create-new-app-button"]').click()
+        const dynamicAppName = `App_${Date.now()}`;
+
+         cy.get('[data-cy="app-name-input"]').clear().type(dynamicAppName);
+
+         // Optionally store it for later use
+        cy.wrap(dynamicAppName).as('appName');
+        cy.get("button[type='submit']").click()
+
+        //Validating API response
+         cy.request('GET','https://cetestsystem.tooljet.com/assets/libs/pyodide-0.23.2/pyodide.js').then((response)=>{
+            expect(response.status).eq(200)
+        })
     })
 
     //Creating APP from template
     it("Create app from template",()=>{
+        cy.get('[data-cy="import-dropdown-menu"]').click()
         cy.get('[data-cy="choose-from-template-button"]').click()
         cy.get('[data-cy="ai-powered-code-explainer-list-item"]').click()
         cy.get('[data-cy="create-application-from-template-button"]').click()
@@ -33,6 +51,7 @@ describe("App creation",()=>{
 
       //Creating app for import template
     it("Create app for import template",()=>{
+        cy.get('[data-cy="import-dropdown-menu"]').click()
         cy.get('[data-cy="import-option-label"]').click(); // simulate open
         cy.get('input[type="file"]').attachFile('samplefile.json');
 
